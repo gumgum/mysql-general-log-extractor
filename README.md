@@ -79,4 +79,4 @@ use(groovy.time.TimeCategory) {
 ```sql
 SELECT * FROM "<your_database_name"."mysql_general_logs" limit 100;
 ```
-##### And there you have it!!! If the steps are correctly executed, the general logs will be pulled out from Mysql and dumped to S3 and accesible through Athena. Please note that this does not modify any of the logs in the mysql.
+##### And there you have it!!! If the steps are correctly executed, the general logs will be pulled out from Mysql and dumped to S3 and accessible through Athena. Please note that this does not modify any of the logs in the mysql.
