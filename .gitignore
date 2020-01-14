@@ -1,0 +1,4 @@
+*.DS_Store
+.settings/
+*.gradle/
+README.html
