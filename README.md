@@ -2,13 +2,13 @@
 Extracts mysql general logs for long term storage which can be used for audit purposes.
 
 
-Mysql removes logs to keep exhausting storage and this can be dictated using storage policy of the logs. For an intance with high volume traffic the storage can get exhausted pretty soon. To investigate the any issue that might be caused by data/schema changes, study of the general logs are very helpful. To increase the retention of the logs, the mysql-general-log-extractor will extract logs from the mysql instance and will store it into AWS S3 buckets. An Athena table is built on this bucket and this table can be used to effectively query this data.
+Mysql removes logs to keep exhausting storage and this can be dictated by the storage policy of the logs. For an intance with high volume traffic the storage can get exhausted pretty soon in which case Mysql will rotate the general_log table. To investigate any business issue that might be caused by data/schema changes, study of the general logs are very helpful. Database access patterns can also be determined using these logs as well. To increase the retention of the logs, the mysql-general-log-extractor will extract logs from the mysql instance and will store it into AWS S3 buckets for a longer durations. An Athena table is built on this bucket and this table can be used to effectively query this data using the abilities of AWS Athena.
 
-### How to configure:
+### How to configure and use:
 
 ##### 0. As a prerequisite install [Groovy version 2.4.7](http://groovy-lang.org/) or higher.
 
-##### 1. Create following table in mysql. This is used for coordinating subsequent runs of the extractor in case of failure which ensures no data/logs are missed.
+##### 1. Create the following table in mysql. This serves as a checkpoint and is used for coordinating subsequent runs of the extractor in case of failure which ensures no data/logs are missed.
 
 ```sql
 CREATE TABLE registry
@@ -19,11 +19,11 @@ CREATE TABLE registry
 )
 ENGINE=InnoDB
 ```
-##### 2. Create an S3 bucket with name ``mysql_general_logs``.
+##### 2. Create a S3 bucket with name ``mysql_general_logs``.
 ##### 3. Create the Athena table named ``mysql_general_logs``. The following query can be used to create the table:
 
 ```sql
-CREATE EXTERNAL TABLE `gumgum_rds_general_logs`(
+CREATE EXTERNAL TABLE `mysql_general_logs`(
   `event_time` string,
   `user_host` string,
   `thread_id` bigint,
@@ -56,7 +56,7 @@ TBLPROPERTIES (
     static final def ATHENA_TABLE_NAME = 'mysql-general-logs'
 ```
 ##### 5. Make sure all permissions and credentials are properly setup. The script needs read and write permission to access Mysql, Athena and S3 (bucket).
-##### 6. Set up cron for this script with an hourly frequency. The command must be executed from the project directory. Following is the hourly cron expression sending all the application logs to /var/log directory.
+##### 6. Set up cron for this script with an hourly frequency. The command must be executed from the project root directory. Following is the hourly cron expression sending all the application logs to /var/log (change as needed) directory.
 ```bash
 * 0 0/1 ? * * * groovy com/roy/mysql/StoreMysqlGeneralLogsToS3.groovy >> /var/log/mysql/mysql-to-s3-copy.log 2>&1
 ```
