@@ -75,8 +75,8 @@ use(groovy.time.TimeCategory) {
             }
         }
 ```
-##### 7. After the first extraction executes (monitor the logs). Execute the folliong query in Athena to see the general logs:
+##### 7. After the first extraction completes (monitor the application logs) execute the following query in Athena to see the general logs:
 ```sql
-SELECT * FROM "<your_database_name"."mysql_general_logs" limit 10;
+SELECT * FROM "<your_database_name"."mysql_general_logs" limit 100;
 ```
 ##### And there you have it!!! If the steps are correctly executed, the general logs will be pulled out from Mysql and dumped to S3 and accesible through Athena. Please note that this does not modify any of the logs in the mysql.
